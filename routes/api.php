@@ -9,21 +9,6 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::post('/login', function (Request $request) {
-    $credentials = $request->validate([
-        'email'    => 'required|email',
-        'password' => 'required',
-    ]);
-
-    if (!Auth::attempt($credentials)) {
-        return response()->json(['message' => 'Invalid credentials'], 401);
-    }
-
-    $token = $request->user()->createToken('API Token')->plainTextToken;
-
-    return response()->json(['token' => $token]);
-});
-
 Route::post('/devices', function (Request $request) {
     $data = $request->validate([
         'device_id' => 'required|string',
@@ -39,6 +24,7 @@ Route::post('/devices', function (Request $request) {
 
 Route::post('/notify', function (Request $request) {
     $request->user();
+    \Illuminate\Support\Facades\Log::info('notify');
 
-    return response('success', 200);
+    return response(null, 200, ['HX-Refresh' => 'true']);
 })->middleware('auth:sanctum');
