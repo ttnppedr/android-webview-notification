@@ -15,7 +15,7 @@ Route::post('/devices', function (Request $request) {
     ]);
 
     UserDevices::create([
-        'user_id' => $request->user()->id,
+        'user_id'   => $request->user()->id,
         'device_id' => $data['device_id'],
     ]);
 
@@ -23,8 +23,30 @@ Route::post('/devices', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/notify', function (Request $request) {
-    $request->user();
     \Illuminate\Support\Facades\Log::info('notify');
+    $deviceId = $request->user()->devices()->latest()->first()->device_id;
+    $encoded
+    = base64_encode(config('services.jpush.app_key').':'.config('services.jpush.master_secret'));
+
+    $data = [
+        'platform'     => 'android',
+        'audience'     => ['registration_id' => [$deviceId]],
+        'notification' => [
+            'android' => [
+                'alert'  => '您有新的通知',
+                'intent' => [
+                    'url' => 'https://bookaroom.good-ideas.studio/',
+                ],
+            ],
+        ],
+    ];
+
+    $res = \Illuminate\Support\Facades\Http::asJson()
+        ->withHeader('Authorization', "Basic $encoded")
+        ->post(config('services.jpush.url').'/v3/push', $data)
+        ->json();
+
+    Log::info(json_encode($res));
 
     return response(null, 200, ['HX-Refresh' => 'true']);
 })->middleware('auth:sanctum');
