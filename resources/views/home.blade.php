@@ -6,6 +6,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <title>Laravel</title>
 
@@ -30,7 +31,9 @@
 
             window.addEventListener('htmx:configRequest', function (event) {
                 const token = @json($token);
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                 event.detail.headers['Authorization'] = `Bearer ${token}`;
+                event.detail.headers['X-CSRF-TOKEN'] = csrfToken;
             });
         </script>
     </head>
