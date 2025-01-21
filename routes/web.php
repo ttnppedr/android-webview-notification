@@ -17,6 +17,10 @@ Route::get('/home', function (Request $request) {
     return view('home', compact('token'));
 })->name('home');
 
+Route::get('/main', function (Request $request) {
+    return view('main');
+})->name('main');
+
 Route::post('/login', function (Request $request) {
     $credentials = $request->validate([
         'email'    => 'required|email',

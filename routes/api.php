@@ -28,14 +28,17 @@ Route::post('/notify', function (Request $request) {
     $encoded
     = base64_encode(config('services.jpush.app_key').':'.config('services.jpush.master_secret'));
 
+    $redirectUrl = config('app.url').'/main';
+
     $data = [
         'platform'     => 'android',
         'audience'     => ['registration_id' => [$deviceId]],
         'notification' => [
             'android' => [
-                'alert'  => '您有新的通知',
+                'title' => 'title',
+                'alert'  => 'alert',
                 'intent' => [
-                    'url' => 'https://bookaroom.good-ideas.studio/',
+                    'url' => "intent:#Intent;action=android.intent.action.VIEW;component=com.example.todo/.SecondActivity;S.url=$redirectUrl;end",
                 ],
             ],
         ],
