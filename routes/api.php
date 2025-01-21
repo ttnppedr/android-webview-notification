@@ -43,6 +43,7 @@ Route::post('/notify', function (Request $request) {
             ],
         ],
     ];
+    Log::info(json_encode($data));
 
     $res = \Illuminate\Support\Facades\Http::asJson()
         ->withHeader('Authorization', "Basic $encoded")
